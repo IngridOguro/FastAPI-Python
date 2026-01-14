@@ -20,28 +20,30 @@ def get_all():
     return items
 
 # GET ITEM BY ID
+def get_item_or_404(item_id: int):
+    try:
+        return items[item_id]
+    except IndexError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Item {item_id} not found"
+        )
+
 @app.get("/items/{item_id}", response_model=Item)
 def get_item(item_id:int) -> Item:
-    if item_id < len(items):
-        return items[item_id]
-    else:
-        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    return get_item_or_404(item_id)
 
 # DELETE
 @app.delete("/items/{item_id}")
 def delete_item(item_id:int) -> list[Item]:
-    if item_id < len(items):
-        items.pop(item_id)
-        return items
-    else:
-        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    items.remove(get_item_or_404(item_id))
+    return items
+
 
 #UPDATE
 @app.put("/items/{item_id}")
 def change_status(item_id:int):
-    if item_id < len(items):
-        items[item_id].is_done = True
-        return items[item_id]
-    else:
-        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    item = get_item_or_404(item_id)
+    item.is_done = True
+    return item
     
