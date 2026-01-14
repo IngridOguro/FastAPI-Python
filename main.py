@@ -36,3 +36,12 @@ def delete_item(item_id:int) -> list[Item]:
     else:
         raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
 
+#UPDATE
+@app.put("/items/{item_id}")
+def change_status(item_id:int):
+    if item_id < len(items):
+        items[item_id].is_done = True
+        return items[item_id]
+    else:
+        raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
+    
